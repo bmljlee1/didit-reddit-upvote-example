@@ -3,6 +3,16 @@ import { CommentList } from "@/components/CommentList";
 import { Vote } from "@/components/Vote";
 import { db } from "@/db";
 
+export async function generateMetadata({ params }) {
+  const res = await db.query(`SELECT title from posts WHERE id=$1`, [
+    params.postId,
+  ]);
+  const postTitle = res.rows[0];
+  return {
+    title: `${postTitle.title} is the title of this post`,
+  };
+}
+
 export default async function SinglePostPage({ params }) {
   const postId = params.postId;
 
@@ -23,6 +33,7 @@ export default async function SinglePostPage({ params }) {
     `SELECT *, users.name from votes
      JOIN users on votes.user_id = users.id`
   );
+  console.log(post.body);
 
   return (
     <div className="max-w-screen-lg mx-auto pt-4 pr-4">
